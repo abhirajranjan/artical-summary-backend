@@ -48,6 +48,11 @@ func main() {
 		mutex.RUnlock()
 	}}))
 
+	credentials := handlers.AllowCredentials()
+	methods := handlers.AllowedMethods([]string{"POST", "GET", "DELETE"})
+   	ttl := handlers.MaxAge(3600)
+   	origins := handlers.AllowedOrigins([]string{"*"})
+
 	fmt.Println("running server on port 80")
 	if err := http.ListenAndServe(":80", handlers.CORS()(router)); err != http.ErrServerClosed {
 		panic(err)
