@@ -10,7 +10,6 @@ import (
 	_ "unsafe"
 
 	"github.com/gorilla/mux"
-	"github.com/gorilla/handlers"
 )
 
 var (
@@ -34,6 +33,17 @@ func init() {
 
 type opts map[string]http.HandlerFunc
 
+func enableCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST,, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Accept")
+	
+	next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/v1/login", routeReq(opts{"POST": login()}))
@@ -48,13 +58,10 @@ func main() {
 		mutex.RUnlock()
 	}}))
 
-	credentials := handlers.AllowCredentials()
-	methods := handlers.AllowedMethods([]string{"POST", "GET", "DELETE"})
-   	ttl := handlers.MaxAge(3600)
-   	origins := handlers.AllowedOrigins([]string{"http://localhost:5173"})
 
+	router.Use(enableCORS)
 	fmt.Println("running server on port 80")
-	if err := http.ListenAndServe(":80", handlers.CORS(credentials, methods, origins, ttl)(router)); err != http.ErrServerClosed {
+	if err := http.ListenAndServe(":80", router); err != http.ErrServerClosed {
 		panic(err)
 	}
 }
