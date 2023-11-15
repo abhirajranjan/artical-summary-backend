@@ -50,11 +50,11 @@ func main() {
 
 	credentials := handlers.AllowCredentials()
 	methods := handlers.AllowedMethods([]string{"POST", "GET", "DELETE"})
-   	handlers.MaxAge(3600)
-   	origins := handlers.AllowedOrigins([]string{"*"})
+   	ttl := handlers.MaxAge(3600)
+   	origins := handlers.AllowedOrigins([]string{"http://localhost:5173"})
 
 	fmt.Println("running server on port 80")
-	if err := http.ListenAndServe(":80", handlers.CORS(credentials, methods, origins)(router)); err != http.ErrServerClosed {
+	if err := http.ListenAndServe(":80", handlers.CORS(credentials, methods, origins, ttl)(router)); err != http.ErrServerClosed {
 		panic(err)
 	}
 }
