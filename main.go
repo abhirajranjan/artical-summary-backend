@@ -10,6 +10,7 @@ import (
 	_ "unsafe"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/handlers"
 )
 
 var (
@@ -48,7 +49,7 @@ func main() {
 	}}))
 
 	fmt.Println("running server on port 80")
-	if err := http.ListenAndServe(":80", router); err != http.ErrServerClosed {
+	if err := http.ListenAndServe(":80", handlers.CORS()(router)); err != http.ErrServerClosed {
 		panic(err)
 	}
 }
