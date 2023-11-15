@@ -50,7 +50,7 @@ func main() {
 
 	credentials := handlers.AllowCredentials()
 	methods := handlers.AllowedMethods([]string{"POST", "GET", "DELETE"})
-   	ttl := handlers.MaxAge(3600)
+   	handlers.MaxAge(3600)
    	origins := handlers.AllowedOrigins([]string{"*"})
 
 	fmt.Println("running server on port 80")
